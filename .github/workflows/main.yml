@@ -9,51 +9,21 @@ jobs:
     build-and-deploy:
         runs-on: ubuntu-latest
         steps:
-        # checkout the repo
-        - name: 'Checkout GitHub Action'
-          uses: actions/checkout@main
-        
-        # login to Azure
-        - name: 'Login via Azure CLI'
-          uses: azure/login@v1
-          with:
-            creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-        # login to ACR
-        - name: 'Login to ACR'
-          uses: azure/docker-login@v1
-          with:
-            login-server: ${{ secrets.REGISTRY_LOGIN_SERVER }}
-            username: ${{ secrets.REGISTRY_USERNAME }}
-            password: ${{ secrets.REGISTRY_PASSWORD }}
-        
-        # lint dockerfile
-        - name: 'Hadolint test'
-          id: hadolint_test
-          run: |
-            OUTPUT=$(docker run --rm -i hadolint/hadolint < dockerfile | wc -l)
-            echo "::set-output name=OUTPUT::$OUTPUT"
-        
-        # build and push image to ACR
-        - name: 'Build and push image'
-          if: steps.hadolint_test.outputs.OUTPUT==0
-          run: |
-            docker build . -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/classifier_g${{ secrets.GROUPE }}:v1
-            docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/classifier_g${{ secrets.GROUPE }}:v1
-        
-        - name: 'Deploy to Container App'
-          uses: Azure/cli@v1
+        - name: Deploy to containerapp
+          uses: azure/CLI@v1
           with:
             inlineScript: |
-              echo "Installing containerapp extension"
-              az extension add --source https://workerappscliextension.blob.core.windows.net/azure-cli-extension/containerapp-0.2.0-py2.py3-none-any.whl --yes
-              echo "Starting Deploying"
-              az containerapp update \
+              az config set extension.use_dynamic_install=yes_without_prompt
+              az containerapp registry set 
                 -n classifier_g4 \
                 -g ${{ secrets.RESOURCE_GROUP }} \
-                -i ${{ secrets.REGISTRY_LOGIN_SERVER }}/classifier_g${{ secrets.GROUPE }}:v1 \
-                --registry-login-server ${{ secrets.REGISTRY_LOGIN_SERVER }} \
-                --registry-username  ${{ secrets.REGISTRY_USERNAME }} \
-                --registry-password ${{ secrets.REGISTRY_PASSWORD }} \
-                --debug
+                --server ${{ secrets.REGISTRY_LOGIN_SERVER }} \
+                --username  ${{ secrets.TASKSMANAGER_REGISTRY_USERNAME }} \
+                --password ${{ secrets.TASKSMANAGER_REGISTRY_PASSWORD }}
+
+              az containerapp update 
+                -n classifier_g4 \
+                -g ${{ secrets.RESOURCE_GROUP }} \
+                --image ${{ secrets.REGISTRY_LOGIN_SERVER }}/classifier_g${{ secrets.GROUPE }}:v1
 
