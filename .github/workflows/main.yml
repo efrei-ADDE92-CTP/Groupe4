@@ -27,27 +27,20 @@ jobs:
             username: ${{ secrets.REGISTRY_USERNAME }}
             password: ${{ secrets.REGISTRY_PASSWORD }}
         
-        # lint dockerfile
-        - name: 'Hadolint test'
-          id: hadolint_test
-          run: |
-            OUTPUT=$(docker run --rm -i hadolint/hadolint < dockerfile | wc -l)
-            echo "::set-output name=OUTPUT::$OUTPUT"
-        
-        # build and push image to ACR
-        - name: 'Build and push image'
-          if: steps.hadolint_test.outputs.OUTPUT==0
-          run: |
-            docker build . -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/classifier_g${{ secrets.GROUPE }}:v1
-            docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/classifier_g${{ secrets.GROUPE }}:v1
-        
         # deploy to ACA
-        - name: Build and deploy Container App
-          uses: azure/container-apps-deploy-action@v0
+        - name: 'Deploy to Container App'
+          uses: Azure/cli@v1
           with:
-            appSourcePath: ${{ github.workspace }}
-            acrName: ${{ secrets.REGISTRY_LOGIN_SERVER }}
-            containerAppName: classifier_g4
-            resourceGroup: ${{ secrets.RESOURCE_GROUP }}
-            imageToBuild: ${{ secrets.REGISTRY_LOGIN_SERVER }}/classifier_g${{ secrets.GROUPE }}:v1
+            inlineScript: |
+              echo "Installing containerapp extension"
+              az extension add --source https://workerappscliextension.blob.core.windows.net/azure-cli-extension/containerapp-0.2.0-py2.py3-none-any.whl --yes
+              echo "Starting Deploying"
+              az containerapp update \
+                -n classifier_g4 \
+                -g ${{ secrets.RESOURCE_GROUP }} \
+                -i ${{ secrets.REGISTRY_LOGIN_SERVER }}/classifier_g${{ secrets.GROUPE }}:v1 \
+                --registry-login-server ${{ secrets.REGISTRY_LOGIN_SERVER }} \
+                --registry-username  ${{ secrets.REGISTRY_USERNAME }} \
+                --registry-password ${{ secrets.REGISTRY_PASSWORD }} \
+                --debug
 
