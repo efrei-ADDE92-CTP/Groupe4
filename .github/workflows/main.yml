@@ -41,4 +41,19 @@ jobs:
             docker build . -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/classifier_g${{ secrets.GROUPE }}:v1
             docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/classifier_g${{ secrets.GROUPE }}:v1
         
+        - name: 'Deploy to Container App'
+          uses: Azure/cli@v1
+          with:
+            inlineScript: |
+              echo "Installing containerapp extension"
+              az extension add --source https://workerappscliextension.blob.core.windows.net/azure-cli-extension/containerapp-0.2.0-py2.py3-none-any.whl --yes
+              echo "Starting Deploying"
+              az containerapp update \
+                -n classifier_g4 \
+                -g ${{ secrets.RESOURCE_GROUP }} \
+                -i ${{ secrets.REGISTRY_LOGIN_SERVER }}/classifier_g${{ secrets.GROUPE }}:v1 \
+                --registry-login-server ${{ secrets.REGISTRY_LOGIN_SERVER }} \
+                --registry-username  ${{ secrets.REGISTRY_USERNAME }} \
+                --registry-password ${{ secrets.REGISTRY_PASSWORD }} \
+                --debug
 
