@@ -26,11 +26,25 @@ jobs:
             login-server: ${{ secrets.REGISTRY_LOGIN_SERVER }}
             username: ${{ secrets.REGISTRY_USERNAME }}
             password: ${{ secrets.REGISTRY_PASSWORD }}
-
+        
+        # lint dockerfile
+        - name: 'Hadolint test'
+          id: hadolint_test
+          run: |
+            OUTPUT=$(docker run --rm -i hadolint/hadolint < dockerfile | wc -l)
+            echo "::set-output name=OUTPUT::$OUTPUT"
         
         # build and push image to ACR
         - name: 'Build and push image'
           if: steps.hadolint_test.outputs.OUTPUT==0
           run: |
-            az containerapp delete -n classifier-g4 -g ADDE92-CTP
+            docker build . -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/classifier_g${{ secrets.GROUPE }}:v1
+            docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/classifier_g${{ secrets.GROUPE }}:v1
         
+        # deploy to ACA
+        #- name: Build and deploy Container App
+        #  uses: azure/container-apps-deploy-action@v0
+        #  with:
+        #    containerAppName: classifier-g${{ secrets.GROUPE }}
+        #    resourceGroup: ${{ secrets.RESOURCE_GROUP }}
+        #    imageToDeploy: ${{ secrets.REGISTRY_LOGIN_SERVER }}/classifier_g${{ secrets.GROUPE }}:v1
