@@ -41,12 +41,17 @@ jobs:
           with:
             inlineScript: |
               az containerapp update \
-              -n classifier-g${{ secrets.GROUPE }} \
-              -g ${{ secrets.RESOURCE_GROUP }} \
-              --min-replicas 4 \
-              --max-replicas 8 \
-              --scale-rule-name my-http-rule \
-              --scale-rule-type http \
-              --scale-rule-http-concurrency 50 \
-              --ingress external \
-              --target-port 80
+                -n classifier-g${{ secrets.GROUPE }} \
+                -g ${{ secrets.RESOURCE_GROUP }} \
+                --min-replicas 4 \
+                --max-replicas 8 \
+                --scale-rule-name my-http-rule \
+                --scale-rule-type http \
+                --scale-rule-http-concurrency 10
+              az containerapp ingress enable 
+                -n classifier-g${{ secrets.GROUPE }} \
+                -g ${{ secrets.RESOURCE_GROUP }} \
+                --type external \
+                --allow-insecure \
+                --target-port 80 \
+                --transport auto
