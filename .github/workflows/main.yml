@@ -39,4 +39,5 @@ jobs:
                 -n classifier-g${{ secrets.GROUPE }} \
                 -g ${{ secrets.RESOURCE_GROUP }} \
                 -i ${{ secrets.REGISTRY_LOGIN_SERVER }}/classifier_g${{ secrets.GROUPE }}:v1 \
+                --environment classifier-g4-env
                 
