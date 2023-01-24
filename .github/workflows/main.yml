@@ -48,3 +48,4 @@ jobs:
               --scale-rule-name my-http-rule \
               --scale-rule-type http \
               --scale-rule-http-concurrency 50
+              --ingress external
