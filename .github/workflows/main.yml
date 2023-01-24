@@ -48,7 +48,7 @@ jobs:
                 --scale-rule-name my-http-rule \
                 --scale-rule-type http \
                 --scale-rule-http-concurrency 10
-              az containerapp ingress enable 
+              az containerapp ingress enable \
                 -n classifier-g${{ secrets.GROUPE }} \
                 -g ${{ secrets.RESOURCE_GROUP }} \
                 --type external \
