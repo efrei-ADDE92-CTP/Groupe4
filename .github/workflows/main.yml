@@ -32,6 +32,7 @@ jobs:
         - name: Build and deploy Container App
           uses: azure/container-apps-deploy-action@v0
           with:
+            appSourcePath: ${{ github.workspace }}
             containerAppName: classifier-g${{ secrets.GROUPE }}
             resourceGroup: ${{ secrets.RESOURCE_GROUP }}
-            acrName: classifier_g4
+            acrName: classifier_g4:v1
