@@ -39,8 +39,4 @@ jobs:
                 -n classifier-g${{ secrets.GROUPE }} \
                 -g ${{ secrets.RESOURCE_GROUP }} \
                 -i ${{ secrets.REGISTRY_LOGIN_SERVER }}/classifier_g${{ secrets.GROUPE }}:v1 \
-                --min-replicas 0 \
-                --max-replicas 5 \
-                --scale-rule-name azure-http-rule \
-                --scale-rule-type http \
-                --scale-rule-http-concurrency 10
+                
