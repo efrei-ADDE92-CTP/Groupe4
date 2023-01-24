@@ -35,4 +35,4 @@ jobs:
             appSourcePath: ${{ github.workspace }}
             containerAppName: classifier-g${{ secrets.GROUPE }}
             resourceGroup: ${{ secrets.RESOURCE_GROUP }}
-            acrName: classifier_g4:v1
+            acrName: classifier_g4
