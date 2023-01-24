@@ -27,6 +27,20 @@ jobs:
             username: ${{ secrets.REGISTRY_USERNAME }}
             password: ${{ secrets.REGISTRY_PASSWORD }}
         
+        # lint dockerfile
+        - name: 'Hadolint test'
+          id: hadolint_test
+          run: |
+            OUTPUT=$(docker run --rm -i hadolint/hadolint < dockerfile | wc -l)
+            echo "::set-output name=OUTPUT::$OUTPUT"
+        
+        # build and push image to ACR
+        - name: 'Build and push image'
+          if: steps.hadolint_test.outputs.OUTPUT==0
+          run: |
+            docker build . -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/classifier_g${{ secrets.GROUPE }}:v1
+            docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/classifier_g${{ secrets.GROUPE }}:v1
+
         # deploy to ACA
         - name: Build and deploy Container App
           uses: azure/container-apps-deploy-action@v0
