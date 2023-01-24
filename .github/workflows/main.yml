@@ -43,7 +43,8 @@ jobs:
               az containerapp update \
               -n classifier-g${{ secrets.GROUPE }} \
               -g ${{ secrets.RESOURCE_GROUP }} \
-              --cpu 0.5 \
-              --memory 1.0Gi \
               --min-replicas 4 \
-              --max-replicas 8
+              --max-replicas 8 \
+              --scale-rule-name my-http-rule \
+              --scale-rule-type http \
+              --scale-rule-http-concurrency 50
