@@ -13,4 +13,4 @@ scrape_configs:
 
   - job_name: classifier_g4
     static_configs:
-      - targets: ['classifier_g4:80']
+      - targets: ['classifier-g4.calmstone-d77b2aac.westeurope.azurecontainerapps.io']

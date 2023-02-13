@@ -1,10 +1,10 @@
 version: '3'
 services:
-  classifier_g4:
-    image: classifier_g4
-    container_name: classifier_g4
-    ports:
-      - 8080:80
+#  classifier_g4:
+#    image: classifier_g4
+#    container_name: classifier_g4
+#    ports:
+#      - 8080:80
 
   prometheus:
     image: prom/prometheus
