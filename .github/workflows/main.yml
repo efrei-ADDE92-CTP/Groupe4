@@ -43,7 +43,7 @@ jobs:
 
         # deploy to ACA
         - name: Build and deploy Container App
-          uses: azure/container-apps-deploy-action@v0
+          uses: azure/container-apps-deploy-action@47e03a783248cc0b5647f7ea03a8fb807fbc8e2f
           with:
             containerAppName: classifier-g${{ secrets.GROUPE }}
             resourceGroup: ${{ secrets.RESOURCE_GROUP }}
