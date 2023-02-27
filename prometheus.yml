@@ -12,5 +12,5 @@ scrape_configs:
       - targets: ['localhost:9090']
 
   - job_name: classifier_g4
-    static_configs:
       - targets: ['classifier-g4.calmstone-d77b2aac.westeurope.azurecontainerapps.io']
+    static_configs:
